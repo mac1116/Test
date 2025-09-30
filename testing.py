@@ -43,10 +43,10 @@ if st.button("Predict Personality"):
     personality = "Extrovert 🎉" if prediction == 1 else "Introvert 🌱"
     st.success(f"Predicted Personality: **{personality}**")
 
-
-
+# Footer
+st.markdown(
     """
     ---
     © 2025 | Created by **Mheil Andrei Cenita**, **Yosh B. Batula**, **Kent Sevellino**
     """
-
+)
