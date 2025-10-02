@@ -24,7 +24,6 @@ with col2:
         st.session_state.mode = "CSV Upload"
 with col3:
     if st.button("🔁 Reset", key="btn_reset"):
-        # optional reset to default
         st.session_state.mode = "Manual Input"
 
 st.markdown("---")
@@ -70,24 +69,7 @@ if st.session_state.mode == "Manual Input":
 # --- CSV UPLOAD MODE ---
 elif st.session_state.mode == "CSV Upload":
     st.subheader("📂 CSV Upload for Batch Prediction")
-    st.write("Upload a CSV with the same column names as the template (download below).")
     uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
-
-    # provide sample template for download
-    if st.button("📥 Download CSV Template", key="download_template"):
-        sample = pd.DataFrame([{
-            col: 0 if col not in ["Stage_fear", "Drained_after_socializing"]
-                 else "No"
-            for col in features
-        }])
-        # set a few reasonable example values
-        if "Time_spent_Alone" in sample.columns: sample["Time_spent_Alone"] = 4
-        if "Social_event_attendance" in sample.columns: sample["Social_event_attendance"] = 3
-        if "Going_outside" in sample.columns: sample["Going_outside"] = 2
-        if "Friends_circle_size" in sample.columns: sample["Friends_circle_size"] = 5
-        if "Post_frequency" in sample.columns: sample["Post_frequency"] = 3
-        st.download_button("Download template CSV", data=sample.to_csv(index=False).encode("utf-8"),
-                           file_name="personality_template.csv", mime="text/csv")
 
     if uploaded_file is not None:
         try:
@@ -96,10 +78,7 @@ elif st.session_state.mode == "CSV Upload":
             st.error(f"Failed to read CSV: {e}")
             st.stop()
 
-        # Normalize column names if necessary (optional)
-        # df_uploaded.columns = df_uploaded.columns.str.strip()
-
-        # Convert Yes/No to 1/0 where applicable (handle case variations)
+        # Convert Yes/No to 1/0 where applicable
         for col in ["Stage_fear", "Drained_after_socializing"]:
             if col in df_uploaded.columns:
                 df_uploaded[col] = df_uploaded[col].replace(
@@ -116,7 +95,6 @@ elif st.session_state.mode == "CSV Upload":
 
             if st.button("🔮 Predict All (CSV)", key="predict_csv"):
                 try:
-                    # ensure numeric types
                     X = df_uploaded[features].astype(float)
                     X_scaled = scaler.transform(X)
                     preds = model.predict(X_scaled)
