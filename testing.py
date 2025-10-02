@@ -10,7 +10,16 @@ st.title("🧠 Personality Prediction App")
 st.write("Welcome! Choose how you want to test the prediction:")
 
 # --- Mode Selection ---
-mode = st.button("Choose Input Mode:", ["Manual Input", "CSV Upload"])
+col1, col2 = st.columns(2)
+mode = None
+
+with col1:
+    if st.button("✍️ Manual Input"):
+        mode = "Manual Input"
+
+with col2:
+    if st.button("📂 CSV Upload"):
+        mode = "CSV Upload"
 
 # --- Manual Input Section ---
 if mode == "Manual Input":
