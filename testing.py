@@ -7,13 +7,25 @@ model, scaler, features = joblib.load("personality_model_and_scaler.pkl")
 
 # --- App Title ---
 st.title("🧠 Personality Prediction App")
-st.write("Welcome! Choose how you want to test the prediction:")
+st.write("Welcome! Please choose how you want to test the prediction:")
 
-# --- Mode Selection ---
-mode = st.radio("Choose Input Mode:", ["Manual Input", "CSV Upload"])
+# --- Mode Selection (Button Style) ---
+col1, col2 = st.columns(2)
+mode = None
+
+with col1:
+    if st.button("✍️ Manual Input"):
+        mode = "Manual Input"
+
+with col2:
+    if st.button("📂 CSV Upload"):
+        mode = "CSV Upload"
+
+st.markdown("---")
 
 # --- Manual Input Section ---
 if mode == "Manual Input":
+    st.subheader("✍️ Manual Input Mode")
     time_spent_alone = st.number_input("Time spent alone (hours)", 0, 24, 5)
     social_event_attendance = st.slider("Social event attendance (per month)", 0, 30, 3)
     going_outside = st.slider("Going outside (days per week)", 0, 7, 2)
@@ -38,14 +50,15 @@ if mode == "Manual Input":
 
     input_scaled = scaler.transform(input_data[features])
 
-    if st.button("Predict Personality"):
+    if st.button("🔮 Predict Personality"):
         prediction = model.predict(input_scaled)[0]
         personality = "Extrovert 🎉" if prediction == 1 else "Introvert 🌱"
         st.success(f"Predicted Personality: **{personality}**")
 
 # --- CSV Upload Section ---
 elif mode == "CSV Upload":
-    uploaded_file = st.file_uploader("📂 Upload a CSV file", type=["csv"])
+    st.subheader("📂 CSV Upload Mode")
+    uploaded_file = st.file_uploader("Upload your CSV file here:", type=["csv"])
 
     if uploaded_file is not None:
         df_uploaded = pd.read_csv(uploaded_file)
@@ -53,7 +66,6 @@ elif mode == "CSV Upload":
         # Encode categorical columns
         if "Stage_fear" in df_uploaded.columns:
             df_uploaded["Stage_fear"] = df_uploaded["Stage_fear"].replace({"Yes": 1, "No": 0}).astype(int)
-
         if "Drained_after_socializing" in df_uploaded.columns:
             df_uploaded["Drained_after_socializing"] = df_uploaded["Drained_after_socializing"].replace({"Yes": 1, "No": 0}).astype(int)
 
