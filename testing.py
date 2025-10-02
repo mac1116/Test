@@ -2,14 +2,13 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model and scaler
 model, scaler, features = joblib.load("personality_model_and_scaler.pkl")
 
-# App Title
+
 st.title("🧠 Personality Prediction App")
 st.write("Welcome to the testing page! Please fill in the details below:")
 
-# Inputs
+
 time_spent_alone = st.number_input("Time spent alone (hours)", 0, 24, 5)
 social_event_attendance = st.slider("Social event attendance (per month)", 0, 30, 3)
 going_outside = st.slider("Going outside (days per week)", 0, 7, 2)
@@ -19,11 +18,11 @@ post_frequency = st.slider("Post frequency (per week)", 0, 50, 1)
 stage_fear = st.radio("Do you have stage fear?", ["Yes", "No"])
 drained_after_socializing = st.radio("Do you feel drained after socializing?", ["Yes", "No"])
 
-# Convert categorical inputs
-stage_fear = 1 if stage_fear == "Yes" else 0
+
+stage_fear = 1 if stage_fear == "Yes" else 0    
 drained_after_socializing = 1 if drained_after_socializing == "Yes" else 0
 
-# Prepare DataFrame
+
 input_data = pd.DataFrame([{
     "Time_spent_Alone": time_spent_alone,
     "Social_event_attendance": social_event_attendance,
@@ -34,16 +33,14 @@ input_data = pd.DataFrame([{
     "Drained_after_socializing": drained_after_socializing
 }])
 
-# Scale inputs
+
 input_scaled = scaler.transform(input_data[features])
 
-# Prediction
 if st.button("Predict Personality"):
     prediction = model.predict(input_scaled)[0]
     personality = "Extrovert 🎉" if prediction == 1 else "Introvert 🌱"
     st.success(f"Predicted Personality: **{personality}**")
 
-# Footer
 st.markdown(
     """
     ---
