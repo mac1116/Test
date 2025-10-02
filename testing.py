@@ -48,6 +48,13 @@ uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 if uploaded_file is not None:
     df_uploaded = pd.read_csv(uploaded_file)
 
+    # Encode categorical columns (same as training)
+    if "Stage_fear" in df_uploaded.columns:
+        df_uploaded["Stage_fear"] = df_uploaded["Stage_fear"].replace({"Yes": 1, "No": 0}).astype(int)
+
+    if "Drained_after_socializing" in df_uploaded.columns:
+        df_uploaded["Drained_after_socializing"] = df_uploaded["Drained_after_socializing"].replace({"Yes": 1, "No": 0}).astype(int)
+
     # Check if all required columns are present
     missing_cols = [col for col in features if col not in df_uploaded.columns]
     if missing_cols:
@@ -68,6 +75,7 @@ if uploaded_file is not None:
         # Option to download results
         csv_output = df_uploaded.to_csv(index=False).encode('utf-8')
         st.download_button("📥 Download Predictions as CSV", data=csv_output, file_name="predicted_personality.csv", mime="text/csv")
+
 
 st.markdown(
     """
